@@ -14,16 +14,20 @@ function Navigation() {
   const { user } = useUser()
   const [session, setsession] = useState<any>()
 
+ console.log(user)
 
   useEffect(()=>{
     async function fu(){
+      console.log('enetered')
       if(user){
-        const session = await fetchUserInfo(user.id)
+        console.log('calld')
+        const session = await fetchUserInfo(user?.id)
+        console.log('session'+session)
         setsession(session)
       }
     }
     fu()
-  },[])
+  },[user])
   return (
     <ul className="nc-Navigation hidden lg:flex lg:flex-wrap lg:space-x-1 relative">
       {session?.role === 'owner' ? NAVIGATION_DEMO.map((item) => (

@@ -11,13 +11,25 @@ import { revalidatePath } from "next/cache"
 
 
 
-const { ObjectId } = mongoose.Types;
+export async function CheckAccuntStats(id) {
+    await Connect()
+    const account = await User.findOne({ userid: id })
+    if (account) {
+      return account.active
+    }
+    return false
+  }
 
 
 
 export const createOrupdateUser = async (name, bio, address, dateOfbirth, contactNumber, gender, email, userid) => {
     
     await Connect();
+    const stat = await CheckAccuntStats(userid)
+    if (stat === false) {
+        redirect('/suspended')
+        return
+    } 
      let customer = await User.findOne({userid: userid})
      const params = { firstName: name};
      await clerkClient.users.updateUser(userid, params);
@@ -52,7 +64,9 @@ export const createOrupdateUser = async (name, bio, address, dateOfbirth, contac
 
  export  const fetchUserInfo = async (userid) => {
     await Connect();
+    console.log('hello')
     if (!userid) return
+    console.log('hello2')
     let customer = await User.findOne({userid: userid})
     if (customer){
         return JSON.parse(JSON.stringify(customer))
@@ -65,6 +79,11 @@ export const createOrupdateUser = async (name, bio, address, dateOfbirth, contac
  export const addNewPlaceorUpdate  = async (placeData, id)=>{
     try {
         await Connect();
+        const stat = await CheckAccuntStats(id)
+        if (stat === false) {
+            redirect('/suspended')
+            return
+        }
         const place = await Place.findById(id)
         if(place){
             const updatePlace = await Place.findByIdAndUpdate(id, placeData, { new: true})
@@ -126,6 +145,11 @@ export const createOrupdateUser = async (name, bio, address, dateOfbirth, contac
 
  export const getAllListings= async (userid) => {
     await Connect();
+    const stat = await CheckAccuntStats(userid)
+        if (stat === false) {
+            redirect('/suspended')
+            return
+        }
     const totalListings = await Place.find({owner: userid})
     return JSON.parse(JSON.stringify(totalListings))
  }
@@ -140,6 +164,11 @@ export const createOrupdateUser = async (name, bio, address, dateOfbirth, contac
  export const createBooking = async (formData) =>{
     try {
         await Connect()
+        const stat = await CheckAccuntStats(formData.user)
+        if (stat === false) {
+            redirect('/suspended')
+            return
+        }
         const booking = new Booking(formData)
         const savedBooking = await booking.save();
         return JSON.parse(JSON.stringify(savedBooking))
@@ -189,3 +218,17 @@ export const createOrupdateUser = async (name, bio, address, dateOfbirth, contac
 
     return JSON.parse(JSON.stringify(places))
  }
+
+ export async function suspendAccounts(identifier, repath) {
+    await Connect()
+    await User.findOneAndUpdate({ userid: identifier }, { active: false })
+    revalidatePath(repath)
+  }
+  
+  //enable account
+  
+  export async function EnableAccounts(identifier, repath) {
+    await Connect()
+    await User.findOneAndUpdate({ userid: identifier }, { active: true })
+    revalidatePath(repath)
+  }

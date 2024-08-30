@@ -1,42 +1,24 @@
-'use client';
+'use client'
+import React from "react";
+import I404Png from "@/images/404.png";
+import Image from "next/image";
+import ButtonPrimary from "@/shared/ButtonPrimary";
 
-import { useEffect } from 'react';
+const Page404 = () => (
+  <div className="nc-Page404">
+    <div className="container relative pt-5 pb-16 lg:pb-20 lg:pt-5">
+      {/* HEADER */}
+      <header className="text-center max-w-2xl mx-auto space-y-2">
+        <Image src={I404Png} alt="not-found" />
+        <span className="block text-sm text-neutral-800 sm:text-base dark:text-neutral-200 tracking-wider font-medium">
+          {`THE PAGE YOU WERE LOOKING FOR DOESN'T EXIST.`}{" "}
+        </span>
+        <div className="pt-8">
+          <ButtonPrimary href="/">Return Home Page</ButtonPrimary>
+        </div>
+      </header>
+    </div>
+  </div>
+);
 
-export default function Error({
-  error,
-  reset
-}) {
-  useEffect(() => {
-    // Log the error to an error reporting service
-    console.error(error);
-  }, [error]);
-
-  return (
-    <main className="p-4 md:p-6">
-      <div className="mb-8 space-y-4">
-        <h1 className="font-semibold text-lg md:text-2xl">
-          Please complete setup
-        </h1>
-        <p>
-          
-        </p>
-        <pre className="my-4 px-3 py-4 bg-black text-white rounded-lg max-w-2xl overflow-scroll flex text-wrap">
-          <code>
-            {`CREATE TABLE users (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL,
-  name VARCHAR(255),
-  username VARCHAR(255)
-);`}
-          </code>
-        </pre>
-        <p>Insert a row for testing:</p>
-        <pre className="my-4 px-3 py-4 bg-black text-white rounded-lg max-w-2xl overflow-scroll flex text-wrap">
-          <code>
-            {`INSERT INTO users (id, email, name, username) VALUES (1, 'me@site.com', 'Me', 'username');`}
-          </code>
-        </pre>
-      </div>
-    </main>
-  );
-}
+export default Page404;

@@ -20,7 +20,9 @@ const MainNav1 =  ({ className = "" }) => {
  const {user} = useUser()
  const pathname = usePathname()
  
-
+  if(pathname.startsWith('/dashboard')){
+    return
+  }
 
   return (
     <div className={`nc-MainNav1 relative z-10 ${className}`}>
